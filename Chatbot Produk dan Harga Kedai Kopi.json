@@ -1,0 +1,163 @@
+{
+  "name": "Chatbot Produk dan Harga Kedai Kopi",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "   Halo! Selamat datang di Kedai Kopi Susu. Silakan tanya apa saja tentang menu, ukuran, dan harga produk kami.",
+        "options": {
+          "subtitle": "   Tanya menu dan harga produk",
+          "title": "   Asisten Kedai Kopi Susu"
+        }
+      },
+      "id": "e4db4f75-6bc6-4ff8-8444-69a72ececf72",
+      "name": "When chat message received",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -256,
+        -96
+      ],
+      "webhookId": "11a1a4d0-a09c-4900-b3ea-6dd418154b67"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Kamu adalah Asisten Kedai Kopi Susu, chatbot layanan pelanggan yang bertugas menjawab pertanyaan tentang produk dan harga di kedai kami.\n\nSumber data: kamu memiliki tool bernama \"Get row(s) in sheet in Google Sheets\" yang membaca data produk dari Google Sheets. Kolomnya adalah: Nama Produk, Kategori, Ukuran, Harga (dalam rupiah), dan Keterangan.\n\nAturan menjawab:\n1. Setiap kali pelanggan menanyakan produk, menu, ukuran, atau harga, WAJIB gunakan tool \"Get row(s) in sheet in Google Sheets\" terlebih dahulu, lalu jawab hanya berdasarkan data yang diambil.\n2. Tulis harga dengan format rupiah, misalnya Rp15.000.\n3. Jika produk yang ditanyakan tidak ada di data, katakan dengan jujur bahwa produk tersebut belum tersedia. Jangan mengarang produk atau harga.\n4. Jika pelanggan meminta rekomendasi atau perbandingan, gunakan data dari sheet (misalnya produk best seller atau yang paling hemat).\n5. Gunakan Bahasa Indonesia yang ramah dan singkat.\n6. Jika pertanyaan di luar topik produk dan harga kedai, tolak dengan sopan dan arahkan kembali ke topik menu dan harga."
+        }
+      },
+      "id": "6fabef2e-f152-4865-8495-504de4c8105b",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        48,
+        -96
+      ]
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.5-flash",
+        "options": {}
+      },
+      "id": "91bd9e73-ac8b-4672-9ce2-ee7a505dd79e",
+      "name": "Google Gemini Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        144
+      ],
+      "credentials": {
+        "googlePalmApi": {
+          "id": "2NpmCQ6eAxTnbyD5",
+          "name": "Google Gemini(PaLM) Api account 3"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "330427b5-eab3-460d-9e0e-527427c11235",
+      "name": "Simple Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        144,
+        144
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1AA4NjPTmlCuwtWSzdeflvnQgto1ll7BjAiK8_2RdbNs",
+          "mode": "list",
+          "cachedResultName": "PAK-AI-tugas2",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AA4NjPTmlCuwtWSzdeflvnQgto1ll7BjAiK8_2RdbNs/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Produk dan Harga Kedai Kopi",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1AA4NjPTmlCuwtWSzdeflvnQgto1ll7BjAiK8_2RdbNs/edit#gid=0"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        256,
+        160
+      ],
+      "id": "f99bbc6f-cdd2-47ad-a75f-3eb7729ae8ed",
+      "name": "Get row(s) in sheet in Google Sheets",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "JCixtE1jDnWOJLG8",
+          "name": "Google Sheets account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get row(s) in sheet in Google Sheets": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "15ad742a-fc27-4144-b4c2-4be46cefc438",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "19db0c37ab138c94680f110f4cb6c268156c28483cc96f4eae2139c2dc470275"
+  },
+  "nodeGroups": [],
+  "id": "KRLZ0LVGV9OJhmB7",
+  "tags": []
+}
