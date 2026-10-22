@@ -1,0 +1,119 @@
+{
+  "name": "Chatbot Konsultasi Bisnis UMKM",
+  "nodes": [
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Halo! Saya Asisten Python Pemula. Silakan tanya apa saja tentang dasar pemrograman Python.",
+        "options": {
+          "subtitle": "Tanya seputar dasar Python",
+          "title": "Asisten Python Pemula"
+        }
+      },
+      "id": "d3464b5d-e56c-4910-8ab6-c399f019c988",
+      "name": "When chat message received",
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.1,
+      "position": [
+        -256,
+        -96
+      ],
+      "webhookId": "5b0c7e52-1f4a-4e0b-9a63-7a1d2c3e4f50"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Kamu adalah Konsultan Bisnis UMKM, chatbot yang bertugas membantu pemilik usaha mikro, kecil, dan menengah di Indonesia. Cakupan topikmu: ide usaha, perencanaan bisnis sederhana, perhitungan modal dan harga pokok penjualan (HPP), penetapan harga jual, pencatatan keuangan dasar, pemasaran digital (media sosial, marketplace, WhatsApp Business), pelayanan pelanggan, serta pengurusan legalitas dasar seperti NIB dan izin usaha.\n\nAturan menjawab:\n1. Gunakan Bahasa Indonesia yang ramah, jelas, dan mudah dipahami pemilik usaha pemula.\n2. Berikan saran yang praktis dan langkah-langkah yang bisa langsung dilakukan, sertakan contoh angka sederhana jika relevan.\n3. Jika informasi kurang (misalnya jenis usaha atau modal), ajukan satu pertanyaan klarifikasi singkat.\n4. Jika pertanyaan di luar topik bisnis UMKM, tolak dengan sopan dan arahkan kembali ke topik UMKM.\n5. Untuk hal hukum, pajak, atau keuangan yang rumit, sarankan konsultasi dengan ahli atau instansi resmi, dan jangan mengarang aturan.\n6. Jaga jawaban ringkas, maksimal sekitar 150 kata."
+        }
+      },
+      "id": "6fae3d77-3807-4615-b95b-4754288e486e",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        48,
+        -96
+      ]
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-3.5-flash",
+        "options": {}
+      },
+      "id": "ef049ad3-9c84-48bf-9419-7abe4c676ca6",
+      "name": "Google Gemini Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -48,
+        144
+      ],
+      "credentials": {
+        "googlePalmApi": {
+          "id": "2NpmCQ6eAxTnbyD5",
+          "name": "Google Gemini(PaLM) Api account 3"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "474a85a7-012b-4dba-bbe9-9e25828fef27",
+      "name": "Simple Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        144,
+        144
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "e00a71a8-faa0-4854-a45c-4892b310f40b",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "19db0c37ab138c94680f110f4cb6c268156c28483cc96f4eae2139c2dc470275"
+  },
+  "nodeGroups": [],
+  "id": "ejYWFq93jJbBeqws",
+  "tags": []
+}
